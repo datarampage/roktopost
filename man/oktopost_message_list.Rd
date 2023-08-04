@@ -14,5 +14,5 @@ oktopost_message_list(campaign_id, with_tags = NULL, network = NULL)
 \item{network}{The social network that you want to get messages for. Optional.}
 }
 \description{
-Get a list of all of the messages you've passed
+Get a list of all of the messages you've posted from a specific campaign
 }

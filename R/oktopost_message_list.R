@@ -1,6 +1,6 @@
 #' oktopost_message_list
 #'
-#' Get a list of all of the messages you've passed
+#' Get a list of all of the messages you've posted from a specific campaign
 #' @param campaign_id The campaign ID - mandatory field
 #' @param with_tags If you want to add your tags or not
 #' @param network The social network that you want to get messages for. Optional.
@@ -23,7 +23,11 @@ oktopost_message_list <- function(campaign_id,with_tags = NULL,network = NULL) {
 
     url <- paste(url,'withTags=1',sep='&')
 
-  }
+  } else {
+
+    with_tags = F
+
+      }
 
   if (is_empty(network) == F) {
 
@@ -67,12 +71,29 @@ oktopost_message_list <- function(campaign_id,with_tags = NULL,network = NULL) {
 
     result_items <- map(result2$Items,nullToNA)
 
-    df <- do.call('bind_rows',map(result2$Items,as_tibble) %>%
+    df <- do.call('bind_rows',purrr::map(result2$Items,as_tibble)) %>%
       tidycols()
 
   }
 
   df[df == ''] <- NA
+
+  return(df)
+
+}
+
+#' oktopost_messages_all
+#'
+#' Get a list of all of the messages you've posted across all campaigns
+#' @export
+
+oktopost_messages_all <- function() {
+
+  all_campaigns <- oktopost_campaign_list() %>%
+    filter(total_posts > 0) %>%
+    pull(id)
+
+  df <- do.call('bind_rows',map(all_campaigns,oktopost_message_list,with_tags=T))
 
   return(df)
 
