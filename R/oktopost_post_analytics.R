@@ -141,3 +141,63 @@ oktopost_social_post_analytics <- function(social_post_id) {
 
   return(df)
 }
+
+#' oktopost_social_posts_all
+#'
+#' Get all of the social posts in a single DF
+#' @param post_df The output of the oktopost_posts_list function
+#' @export
+
+oktopost_social_posts_all <- function(post_df) {
+
+  require(tidyverse)
+  require(purrr)
+
+  social_posts <- tibble()
+
+  post_ids <- post_df %>%
+    pull(id)
+
+  for (i in 1:length(post_ids)) {
+
+    social_temp <- oktopost_social_post(post_ids[[i]])
+
+    social_posts <- bind_rows(social_posts,social_temp)
+
+    print(paste(i,': ',post_ids[[i]],' processed',sep=''))
+
+  }
+
+  return(social_posts)
+
+}
+
+#' oktopost_social_analytics_all
+#'
+#' Get all of the social analytics posts in a single DF
+#' @param social_df The output of the oktopost_social_post function (or oktopost_social_post_all)
+#' @export
+
+oktopost_social_analytics_all <- function(social_df) {
+
+  require(tidyverse)
+  require(purrr)
+
+  social_analytics <- tibble()
+
+  social_post_ids <- social_df %>%
+    pull(id)
+
+  for (i in 1:length(social_post_ids)) {
+
+    analytics_temp <- oktopost_social_post_analytics(social_post_ids[[i]])
+
+    social_analytics <- bind_rows(social_analytics,analytics_temp)
+
+    print(paste(i,': ',post_ids[[i]],' processed',sep=''))
+
+  }
+
+  return(social_analytics)
+
+}
