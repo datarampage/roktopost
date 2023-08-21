@@ -71,7 +71,7 @@ oktopost_message_list <- function(campaign_id,with_tags = NULL,network = NULL) {
 
     result_items <- map(result2$Items,nullToNA)
 
-    df <- do.call('bind_rows',purrr::map(result2$Items,as_tibble)) %>%
+    df <- do.call('bind_rows',purrr::map(result_items,as_tibble)) %>%
       tidycols()
 
   }
@@ -85,15 +85,12 @@ oktopost_message_list <- function(campaign_id,with_tags = NULL,network = NULL) {
 #' oktopost_messages_all
 #'
 #' Get a list of all of the messages you've posted across all campaigns
+#' @param campaign_ids A vector of campaign IDs
 #' @export
 
-oktopost_messages_all <- function() {
+oktopost_messages_all <- function(campaign_ids) {
 
-  all_campaigns <- oktopost_campaign_list() %>%
-    filter(total_posts > 0) %>%
-    pull(id)
-
-  df <- do.call('bind_rows',map(all_campaigns,oktopost_message_list,with_tags=T))
+  df <- do.call('bind_rows',map(campaign_ids,oktopost_message_list,with_tags=T))
 
   return(df)
 
