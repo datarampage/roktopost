@@ -57,7 +57,6 @@ tidycols <- function(df) {
 parquet_write <- function(df,file_name=NULL,path = '/tmp') {
 
   require(arrow)
-  require(aws.s3)
   require(tidyverse)
   require(purrr)
 
