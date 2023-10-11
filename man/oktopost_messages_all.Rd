@@ -4,7 +4,10 @@
 \alias{oktopost_messages_all}
 \title{oktopost_messages_all}
 \usage{
-oktopost_messages_all()
+oktopost_messages_all(campaign_ids)
+}
+\arguments{
+\item{campaign_ids}{A vector of campaign IDs}
 }
 \description{
 Get a list of all of the messages you've posted across all campaigns

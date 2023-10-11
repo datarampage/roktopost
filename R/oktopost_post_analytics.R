@@ -194,7 +194,7 @@ oktopost_social_analytics_all <- function(social_df) {
 
     social_analytics <- bind_rows(social_analytics,analytics_temp)
 
-    print(paste(i,': ',post_ids[[i]],' processed',sep=''))
+    print(paste(i,': ',social_post_ids[[i]],' processed',sep=''))
 
   }
 
