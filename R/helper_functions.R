@@ -45,3 +45,45 @@ tidycols <- function(df) {
 
   return(df)
 }
+
+#' parquet_write
+#'
+#' Dump a dataframe to a parquet file for loading into Snowflake
+#' @param df The dataframe
+#' @param file_name The name of the file
+#' @param path The filepath
+#' @export
+
+parquet_write <- function(df,file_name=NULL,path = '/tmp') {
+
+  require(arrow)
+  require(aws.s3)
+  require(tidyverse)
+  require(purrr)
+
+  #generate the filename and path
+
+    options(digits.secs=3)
+    # get date + time in UTC
+    ts_utc <- as.POSIXlt(Sys.time(), tz = "UTC")
+    # format it
+    ts_utc_formated <- gsub(".", "", format(ts_utc, format = "%Y%m%d-%H%M%OS3"),fixed=TRUE)
+   
+    # final filename
+
+    if (is_empty(file_name) == F) {
+
+        filename <- paste(ts_utc_formated,'_',file_name,'.parquet',sep='')
+    } else {
+
+        filename <- paste(ts_utc_formated,'.parquet',sep='')
+
+    }
+
+    filepath <- paste(path,filename,sep = '/')
+
+    #save the file to temp storage
+
+    write_parquet(df,sink = filepath)
+
+}
