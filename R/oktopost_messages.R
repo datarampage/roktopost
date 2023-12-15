@@ -8,7 +8,7 @@
 oktopost_messages <- function(message_id) {
 
   require(httr)
-  require(purrr)
+  require(snakecase)
   require(tidyverse)
 
   base_url = "https://api.oktopost.com/v2"
@@ -31,7 +31,7 @@ oktopost_messages <- function(message_id) {
 
   message <- as_tibble(nullToNA(message))
 
-  names(message) <-  to_snake_case(names(message))
+  names(message) <- to_snake_case(names(message))
 
   return(message)
 
