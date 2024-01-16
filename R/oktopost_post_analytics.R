@@ -97,9 +97,10 @@ oktopost_social_post <- function(post_id) {
 
   result2 <- content(result,'parsed')
 
-  df <- do.call('bind_rows',map(result2$Postlogs,as_tibble)) %>%
+  result2$Postlogs[[1]]$LinkIds <- NULL
+  
+  df <- as_tibble(result2$Postlogs[[1]]) %>%
     tidycols() %>%
-    select(-link_ids) %>%
     distinct()
 
   return(df)
@@ -152,22 +153,51 @@ oktopost_social_posts_all <- function(post_df) {
 
   require(tidyverse)
   require(purrr)
-
+  
   social_posts <- tibble()
-
+  log <- tibble()
+  
   post_ids <- post_df %>%
     pull(id)
-
+  
   for (i in 1:length(post_ids)) {
-
+    
     social_temp <- oktopost_social_post(post_ids[[i]])
-
+    
     social_posts <- bind_rows(social_posts,social_temp)
-
-    print(paste(i,': ',post_ids[[i]],' processed',sep=''))
-
+    
+    if (nrow(social_temp) > 0) {
+      
+      temp_log <- tibble(index = i,
+                         id = post_ids[[i]],
+                         pass = TRUE)
+      
+      log <- bind_rows(log,temp_log)
+      
+      print(paste(i,': ',post_ids[[i]],' PASSED',sep=''))
+      
+    } else {
+      
+      temp_log <- tibble(index = i,
+                         id = post_ids[[i]],
+                         pass = FALSE)
+      
+      log <- bind_rows(log,temp_log)
+      
+      print(paste(i,': ',post_ids[[i]],' FAILED',sep=''))
+      
+      
+    }
+    
+    
   }
 
+  log_stats <- log %>%
+    group_by(pass) %>%
+    summarise(n = n())
+
+  print(log_stats)
+  
   return(social_posts)
 
 }
